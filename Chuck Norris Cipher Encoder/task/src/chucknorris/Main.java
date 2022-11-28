@@ -1,16 +1,54 @@
 package chucknorris;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main
 {
     public static void main(String[] args)
     {
-//        String converted = charToBin();
-//        binToChuckCode(converted);
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            System.out.println("Please input operation (encode/decode/exit):");
+            String answer = scanner.nextLine();
+            if ("encode".equals(answer)) {
+                String converted = charToBin();
+                binToChuckCode(converted);
+            } else if ("decode".equals(answer)) {
+                String binCode = ChuckToBin();
+                if (binCode.length() % 7 == 0) {
+                    binToString(binCode);
+                } else {
+                    System.out.println("Encoded string is not valid.");
+                    System.out.println();
+                }
+            } else if ("exit".equals(answer)) {
+                System.out.println("Bye!");
+                break;
+            } else {
+                System.out.printf("There is no '%s' operation\n", answer);
+                System.out.println();
+            }
+        }
+    }
 
-        String binCode = ChuckToBin();
-        binToString(binCode);
+    public static boolean checkInput(String[] ChuckCode) {
+        if (ChuckCode.length % 2 != 0) {
+            return false;
+        }
+
+        for (int k = 0; k < ChuckCode.length; k += 2) {
+            if (!"0".equals(ChuckCode[k]) && !"00".equals(ChuckCode[k])) {
+                return false;
+            }
+        }
+
+        for (String i: ChuckCode) {
+                if (!i.chars().allMatch(c -> c == '0')) {
+                    return false;
+                }
+        }
+        return true;
     }
 
     public static String charToBin () {
@@ -20,13 +58,13 @@ public class Main
         char[] str = scanner.nextLine().toCharArray();
         String converted = "";
 
-        System.out.println();
-        System.out.println("The result:");
+        System.out.println("Encoded string:");
 
         for (char i : str)
         {
             converted += String.format("%7s", Integer.toBinaryString(i)).replace(" ", "0");
         }
+
         return converted;
     }
 
@@ -57,28 +95,33 @@ public class Main
 
             if (i < converted.length()) System.out.print(" ");
         }
+        System.out.println();
+        System.out.println();
     }
 
     public static String ChuckToBin() {
-        System.out.println();
         System.out.println("Input encoded string:");
         Scanner scanner = new Scanner(System.in);
 
         String[] ChuckCode = scanner.nextLine().split(" ");
-        String binCode = "";
 
-        for (int i = 0; i < ChuckCode.length; i += 2) {
-            if ("0".equals(ChuckCode[i])) {
-                for (int j = 0; j < ChuckCode[i + 1].length(); j++) {
-                    binCode += '1';
-                }
-            } else {
-                for (int j = 0; j < ChuckCode[i + 1].length(); j++) {
-                    binCode += '0';
+        if (checkInput(ChuckCode)) {
+            String binCode = "";
+
+            for (int i = 0; i < ChuckCode.length; i += 2) {
+                if ("0".equals(ChuckCode[i])) {
+                    for (int j = 0; j < ChuckCode[i + 1].length(); j++) {
+                        binCode += '1';
+                    }
+                } else {
+                    for (int j = 0; j < ChuckCode[i + 1].length(); j++) {
+                        binCode += '0';
+                    }
                 }
             }
+            return binCode;
         }
-        return binCode;
+        return " ";
     }
 
     public static void binToString (String binCode) {
@@ -89,9 +132,9 @@ public class Main
             Str += (char)Integer.parseInt(i,2);
         }
 
-        System.out.println();
-        System.out.println("The result:");
+        System.out.println("Decoded string:");
         System.out.println(Str);
+        System.out.println();
     }
 
 }
